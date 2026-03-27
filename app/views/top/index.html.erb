@@ -1,0 +1,86 @@
+<header>
+    <div class="logo">One Step</div>
+    <div class="nav-links">
+        <% if user_signed_in? %>
+            <%# ログインしている場合：登録したメールアドレスや名前を表示 %>
+            <span>ようこそ、<%= current_user.name %> さん</span>
+            <%= link_to 'Logout', destroy_user_session_path, data: { "turbo-method": :delete } %>
+        <% else %>
+            <%# ログインしていない場合 %>
+            <%= link_to 'Login', new_user_session_path %>
+        <% end %>
+    </div>
+</header>
+
+<section class="goal-section">
+    <div class="goal-label">Current Long-term Goal</div>
+    <div class="goal-content"><%= current_user.long_term_goal %></div>
+</section>
+
+<div class="container">
+    <div class="calendar-card">
+        <div class="calendar-header">
+            <span>2026年 3月</span>
+            <span style="font-size: 0.8rem; color: #888;">今月の達成: 12回 ⭐</span>
+        </div>
+        <div class="calendar-grid">
+            <div class="day-label">Sun</div><div class="day-label">Mon</div><div class="day-label">Tue</div><div class="day-label">Wed</div><div class="day-label">Thu</div><div class="day-label">Fri</div><div class="day-label">Sat</div>
+            
+            <%# カレンダーの数字部分は一旦そのまま（後でRailsで自動生成します！） %>
+            <div class="day">1</div><div class="day completed">2</div><div class="day completed">3</div><div class="day">4</div><div class="day completed">5</div><div class="day">6</div><div class="day">7</div>
+            <div class="day">8</div><div class="day">9</div><div class="day">10</div><div class="day">11</div><div class="day">12</div><div class="day">13</div><div class="day">14</div>
+            <div class="day">15</div><div class="day">16</div><div class="day">17</div><div class="day">18</div><div class="day">19</div><div class="day">20</div><div class="day">21</div>
+            <div class="day">22</div><div class="day">23</div><div class="day">24</div><div class="day">25</div><div class="day">26</div><div class="day today" onclick="openModal('2026/03/27')">27</div><div class="day">28</div>
+            <div class="day">29</div><div class="day">30</div><div class="day">31</div>
+        </div>
+    </div>
+</div>
+
+<div id="actionModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <div class="modal-title" id="modalDate">2026/03/27</div>
+        
+        <form onsubmit="alert('Railsのcreate/updateアクションへ保存します'); closeModal(); return false;">
+            <div class="form-group">
+                <label>☀️ 今日のAction（第二領域）</label>
+                <input type="text" placeholder="例：RailsのDB設計を30分進める" required>
+            </div>
+            
+            <div class="form-group">
+                <label>🌙 今日の振り返り</label>
+                <textarea placeholder="今日できたこと、感じたことをメモ"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>🚀 明日の展望</label>
+                <input type="text" placeholder="明日、最高のスタートを切るために一言">
+            </div>
+
+            <button type="submit" class="save-btn">保存して一歩進む</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal(date) {
+        document.getElementById('modalDate').innerText = date + " の記録";
+        document.getElementById('actionModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('actionModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('actionModal')) {
+            closeModal();
+        }
+    }
+
+    <div class="goal-content">
+  <% if user_signed_in? %>
+    <%= current_user.long_term_goal %>
+  <% end %>
+</div>
+</script>
