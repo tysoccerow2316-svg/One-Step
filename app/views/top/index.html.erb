@@ -3,7 +3,7 @@
     <div class="nav-links">
         <% if user_signed_in? %>
             <%# ログインしている場合：登録したメールアドレスや名前を表示 %>
-            <span>ようこそ、<%= current_user.name %> さん</span>
+            <span>ようこそ<%= current_user.name %> さん</span>
             <%= link_to 'Logout', destroy_user_session_path, data: { "turbo-method": :delete } %>
         <% else %>
             <%# ログインしていない場合 %>
