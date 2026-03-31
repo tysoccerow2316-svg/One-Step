@@ -23,48 +23,80 @@
             <span>2026年 3月</span>
             <span style="font-size: 0.8rem; color: #888;">今月の達成: 12回 ⭐</span>
         </div>
-        <div class="calendar-grid">
-            <div class="day-label">Sun</div><div class="day-label">Mon</div><div class="day-label">Tue</div><div class="day-label">Wed</div><div class="day-label">Thu</div><div class="day-label">Fri</div><div class="day-label">Sat</div>
-            
-            <%# カレンダーの数字部分は一旦そのまま（後でRailsで自動生成します！） %>
-            <div class="day">1</div><div class="day completed">2</div><div class="day completed">3</div><div class="day">4</div><div class="day completed">5</div><div class="day">6</div><div class="day">7</div>
-            <div class="day">8</div><div class="day">9</div><div class="day">10</div><div class="day">11</div><div class="day">12</div><div class="day">13</div><div class="day">14</div>
-            <div class="day">15</div><div class="day">16</div><div class="day">17</div><div class="day">18</div><div class="day">19</div><div class="day">20</div><div class="day">21</div>
-            <div class="day">22</div><div class="day">23</div><div class="day">24</div><div class="day">25</div><div class="day">26</div><div class="day today" onclick="openModal('2026/03/27')">27</div><div class="day">28</div>
-            <div class="day">29</div><div class="day">30</div><div class="day">31</div>
+       <div class="calendar-grid">
+    <div class="day-label">Sun</div><div class="day-label">Mon</div><div class="day-label">Tue</div><div class="day-label">Wed</div><div class="day-label">Thu</div><div class="day-label">Fri</div><div class="day-label">Sat</div>
+    
+    <%# 1日から31日までループを回す %>
+    <% (1..31).each do |day| %>
+        <%# 判定用の日付文字列（例: "2026-03-01"）を作る %>
+        <% current_date = "2026-03-#{format('%02d', day)}" %>
+        
+        <%# その日のデータが @actions の中にあるかチェック %>
+        <% has_action = @actions.any? { |a| a.date.to_s == current_date } %>
+        
+        <div class="day <%= 'completed' if has_action %> <%= 'today' if day == 27 %>" 
+             onclick="openModal('<%= current_date %>')">
+            <%= day %>
         </div>
+    <% end %>
+</div>
     </div>
+</div>
+
+<div class="container">
+    <h3>これまでの歩み</h3>
+    <ul>
+      <% @actions.each do |action| %>
+        <li><%= action.date %>: <%= action.content %> ⭐</li>
+      <% end %>
+    </ul>
 </div>
 
 <div id="actionModal" class="modal">
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
-        <div class="modal-title" id="modalDate">2026/03/27</div>
+        <div class="modal-title" id="modalDateDisplay">日付</div>
         
-        <form onsubmit="alert('Railsのcreate/updateアクションへ保存します'); closeModal(); return false;">
+        <%# Railsの本物のフォーム作成用コード %>
+        <%= form_with(model: Action.new, scope: :user_action, url: actions_path,local: true) do |f| %>
+            <%# JavaScriptから日付を渡すための隠し入力欄 %>
+            <%= f.hidden_field :date, id: 'modalDateInput' %>
+
             <div class="form-group">
                 <label>☀️ 今日のAction（第二領域）</label>
-                <input type="text" placeholder="例：RailsのDB設計を30分進める" required>
+                <%= f.text_field :content, placeholder: "例：RailsのDB設計を30分進める", required: true %>
             </div>
             
             <div class="form-group">
                 <label>🌙 今日の振り返り</label>
-                <textarea placeholder="今日できたこと、感じたことをメモ"></textarea>
+                <%= f.text_area :reflection, placeholder: "今日できたこと、感じたことをメモ" %>
             </div>
 
             <div class="form-group">
                 <label>🚀 明日の展望</label>
-                <input type="text" placeholder="明日、最高のスタートを切るために一言">
+                <%= f.text_field :tomorrow_goal, placeholder: "明日、最高のスタートを切るために一言" %>
             </div>
 
-            <button type="submit" class="save-btn">保存して一歩進む</button>
-        </form>
+            <%= f.submit "保存して一歩進む", class: "save-btn" %>
+        <% end %>
     </div>
 </div>
 
 <script>
     function openModal(date) {
-        document.getElementById('modalDate').innerText = date + " の記録";
+        // 1. 画面上の日付表示を更新（「2026/03/27 の記録」など）
+        const displayElement = document.getElementById('modalDateDisplay');
+        if (displayElement) {
+            displayElement.innerText = date + " の記録";
+        }
+        
+        // 2. Railsへ送るための隠し入力欄に日付をセット
+        const inputElement = document.getElementById('modalDateInput');
+        if (inputElement) {
+            inputElement.value = date;
+        }
+        
+        // 3. モーダルを表示
         document.getElementById('actionModal').style.display = 'flex';
     }
 
@@ -72,15 +104,11 @@
         document.getElementById('actionModal').style.display = 'none';
     }
 
+    // モーダルの外側をクリックしたら閉じる設定
     window.onclick = function(event) {
-        if (event.target == document.getElementById('actionModal')) {
+        const modal = document.getElementById('actionModal');
+        if (event.target == modal) {
             closeModal();
         }
     }
-
-    <div class="goal-content">
-  <% if user_signed_in? %>
-    <%= current_user.long_term_goal %>
-  <% end %>
-</div>
 </script>
