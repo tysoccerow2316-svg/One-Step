@@ -7,6 +7,10 @@ class ActionsController < ApplicationController
     if @action.save
       redirect_to root_path, notice: '一歩進みました！'
     else
+      
+      @actions = current_user.actions.order(date: :desc) 
+      
+      flash.now[:alert] = '保存に失敗しました。内容を確認してください。'
       render "top/index", status: :unprocessable_entity
     end
   end

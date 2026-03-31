@@ -19,24 +19,31 @@
 
 <div class="container">
     <div class="calendar-card">
-        <div class="calendar-header">
-            <span>2026年 3月</span>
-            <span style="font-size: 0.8rem; color: #888;">今月の達成: 12回 ⭐</span>
-        </div>
-       <div class="calendar-grid">
+       <div class="calendar-header">
+    <%# 今日の年月を自動表示（例：2026年 4月） %>
+    <span><%= @today.strftime('%Y年 %-m月') %></span>
+    <span style="font-size: 0.8rem; color: #888;">
+        今月の達成: <%= @actions.count %>回 ⭐
+    </span>
+</div>
+
+<div class="calendar-grid">
     <div class="day-label">Sun</div><div class="day-label">Mon</div><div class="day-label">Tue</div><div class="day-label">Wed</div><div class="day-label">Thu</div><div class="day-label">Fri</div><div class="day-label">Sat</div>
     
-    <%# 1日から31日までループを回す %>
-    <% (1..31).each do |day| %>
-        <%# 判定用の日付文字列（例: "2026-03-01"）を作る %>
-        <% current_date = "2026-03-#{format('%02d', day)}" %>
-        
+    <%# コントローラーで計算した「始まりの日」から「終わりの日」まで1日ずつループ %>
+    <% (@start_date..@end_date).each do |date| %>
         <%# その日のデータが @actions の中にあるかチェック %>
-        <% has_action = @actions.any? { |a| a.date.to_s == current_date } %>
+        <% action = @actions.find { |a| a.date == date } %>
         
-        <div class="day <%= 'completed' if has_action %> <%= 'today' if day == 27 %>" 
-             onclick="openModal('<%= current_date %>')">
-            <%= day %>
+        <%# クラスの付け替え（今月以外の日、今日、保存済み） %>
+        <% day_classes = [] %>
+        <% day_classes << 'completed' if action %>
+        <% day_classes << 'today' if date == @today %>
+        <% day_classes << 'other-month' if date.month != @today.month %>
+        
+        <div class="day <%= day_classes.join(' ') %>" 
+             onclick="openModal('<%= date %>', '<%= action&.content %>', '<%= action&.reflection %>', '<%= action&.tomorrow_goal %>')">
+            <%= date.day %>
         </div>
     <% end %>
 </div>
@@ -63,19 +70,17 @@
             <%= f.hidden_field :date, id: 'modalDateInput' %>
 
             <div class="form-group">
-                <label>☀️ 今日のAction（第二領域）</label>
-                <%= f.text_field :content, placeholder: "例：RailsのDB設計を30分進める", required: true %>
-            </div>
-            
-            <div class="form-group">
-                <label>🌙 今日の振り返り</label>
-                <%= f.text_area :reflection, placeholder: "今日できたこと、感じたことをメモ" %>
-            </div>
-
-            <div class="form-group">
-                <label>🚀 明日の展望</label>
-                <%= f.text_field :tomorrow_goal, placeholder: "明日、最高のスタートを切るために一言" %>
-            </div>
+    <label>☀️ 今日のAction</label>
+    <%= f.text_field :content, id: 'contentField', placeholder: "例：RailsのDB設計を30分進める", required: true %>
+</div>
+<div class="form-group">
+    <label>🌙 今日の振り返り</label>
+    <%= f.text_area :reflection, id: 'reflectionField', placeholder: "今日できたこと、感じたことをメモ" %>
+</div>
+<div class="form-group">
+    <label>🚀 明日の展望</label>
+    <%= f.text_field :tomorrow_goal, id: 'goalField', placeholder: "明日、最高のスタートを切るために一言" %>
+</div>
 
             <%= f.submit "保存して一歩進む", class: "save-btn" %>
         <% end %>
@@ -83,28 +88,37 @@
 </div>
 
 <script>
-    function openModal(date) {
-        // 1. 画面上の日付表示を更新（「2026/03/27 の記録」など）
+    // 1. モーダルを開く関数（引数にデータを受け取るように進化！）
+    function openModal(date, content, reflection, tomorrowGoal) {
+        // 表示用と隠し入力用の日付をセット
         const displayElement = document.getElementById('modalDateDisplay');
-        if (displayElement) {
-            displayElement.innerText = date + " の記録";
-        }
+        if (displayElement) displayElement.innerText = date + " の記録";
         
-        // 2. Railsへ送るための隠し入力欄に日付をセット
         const inputElement = document.getElementById('modalDateInput');
-        if (inputElement) {
-            inputElement.value = date;
+        if (inputElement) inputElement.value = date;
+
+        // フォームの各入力欄に、保存済みの値をセット（データがない場合は "" 空文字になる）
+        // ※ HTML側の input/textarea に id="contentField" などがついている必要があります！
+        if (document.getElementById('contentField')) {
+            document.getElementById('contentField').value = content || "";
         }
-        
-        // 3. モーダルを表示
+        if (document.getElementById('reflectionField')) {
+            document.getElementById('reflectionField').value = reflection || "";
+        }
+        if (document.getElementById('goalField')) {
+            document.getElementById('goalField').value = tomorrowGoal || "";
+        }
+
+        // モーダルを表示
         document.getElementById('actionModal').style.display = 'flex';
     }
 
+    // 2. モーダルを閉じる関数
     function closeModal() {
         document.getElementById('actionModal').style.display = 'none';
     }
 
-    // モーダルの外側をクリックしたら閉じる設定
+    // 3. モーダルの外側をクリックしたら閉じる設定
     window.onclick = function(event) {
         const modal = document.getElementById('actionModal');
         if (event.target == modal) {

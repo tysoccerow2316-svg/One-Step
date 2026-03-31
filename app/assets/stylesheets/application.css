@@ -1,5 +1,5 @@
 
-        /* CSS: 爽やかな青空のイメージ */
+        
         :root {
             --sky-blue-top: #4facfe;
             --sky-blue-bottom: #00f2fe;
@@ -166,3 +166,23 @@
             .goal-content { font-size: 1.2rem; }
         }
     
+       
+.day.completed {
+    background-color: #8ecae6;
+    color: white;
+    border: none;
+}
+
+.day.today {
+border: 2px solid #ffb703; 
+}
+
+.day.today.completed {
+    background-color: #219ebc; 
+    border: 2px solid #ffb703; 
+}
+
+.day.other-month {
+    color: #ccc; 
+    background-color: #fafafa; 
+}
