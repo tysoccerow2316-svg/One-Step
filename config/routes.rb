@@ -11,4 +11,6 @@ Rails.application.routes.draw do
   # root "posts#index"
    root 'top#index'
   resources :user_actions, controller: 'actions'
+
+  resource :profile, only: [:show, :edit, :update]
 end

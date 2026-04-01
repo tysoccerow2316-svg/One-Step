@@ -211,3 +211,70 @@ border: 2px solid #ffb703;
 .delete-btn:hover {
     background-color: #ffd1d1;
 }
+
+/* プロフィール用のスタイル例 */
+.profile-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+.section-title {
+  color: #333;
+  border-bottom: 2px solid #ffcc00; /* ロゴに合わせた黄色など */
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.profile-item {
+  margin-bottom: 1.5rem;
+}
+
+.profile-item label {
+  display: block;
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 0.3rem;
+}
+
+.profile-value {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.goal-box {
+  background: #fffdf0;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #ffcc00;
+  line-height: 1.6;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 0.5rem;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.nav-link:hover {
+    background-color: #f0f0f0;
+}
+
+.logout {
+    color: #888;
+    font-size: 0.9rem;
+}

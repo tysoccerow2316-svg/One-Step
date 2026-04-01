@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="profile-card">
+    <h2 class="section-title">マイページ</h2>
+    
+    <div class="profile-item">
+      <label>ユーザー名</label>
+      <p class="profile-value"><%= @user.name %></p>
+    </div>
+
+    <div class="profile-item">
+      <label>現在の長期目標</label>
+      <div class="goal-box">
+        <%= @user.long_term_goal.presence || "目標が設定されていません" %>
+      </div>
+    </div>
+
+    <div class="profile-actions">
+      <%= link_to 'プロフィールを編集する', edit_profile_path, class: 'edit-btn' %>
+      <%= link_to 'カレンダーに戻る', root_path, class: 'back-btn' %>
+    </div>
+  </div>
+</div>

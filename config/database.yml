@@ -79,6 +79,4 @@ test:
 #
 production:
   <<: *default
-  database: one_step_production
-  username: one_step
-  password: <%= ENV["ONE_STEP_DATABASE_PASSWORD"] %>
+  url: <%= ENV['DATABASE_URL'] %>

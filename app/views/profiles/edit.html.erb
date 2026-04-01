@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="profile-card">
+    <h2 class="section-title">プロフィールの編集</h2>
+
+    <%= form_with(model: @user, url: profile_path, method: :patch, local: true) do |f| %>
+      <div class="form-group">
+        <%= f.label :name, "名前" %>
+        <%= f.text_field :name, class: 'form-input' %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :long_term_goal, "長期目標（ビジョン）" %>
+        <%= f.text_area :long_term_goal, rows: 5, class: 'form-input', placeholder: "例：半年後にエンジニアとして転職し、自走できる人材になる！" %>
+      </div>
+
+      <div class="profile-actions">
+        <%= f.submit "保存する", class: 'submit-btn' %>
+        <%= link_to 'キャンセル', profile_path, class: 'back-btn' %>
+      </div>
+    <% end %>
+  </div>
+</div>
