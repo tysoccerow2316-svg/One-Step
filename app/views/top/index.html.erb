@@ -47,7 +47,13 @@
         <% day_classes << 'other-month' if date.month != @today.month %>
         
         <div class="day <%= day_classes.join(' ') %>" 
-            onclick="openModal('<%= date %>', '<%= action&.content %>', '<%= action&.reflection %>', '<%= action&.tomorrow_goal %>', '<%= action&.id %>')">
+            onclick="openModal(
+  '<%= date %>',
+  '<%= j action&.content %>',
+  '<%= j action&.reflection %>',
+  '<%= j action&.tomorrow_goal %>',
+  '<%= action&.id %>'
+)">
             <%= date.day %>
         </div>
     <% end %>
