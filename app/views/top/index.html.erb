@@ -19,12 +19,17 @@
 
 <div class="container">
     <div class="calendar-card">
-       <div class="calendar-header">
-    <%# 今日の年月を自動表示（例：2026年 4月） %>
-    <span><%= @today.strftime('%Y年 %-m月') %></span>
-    <span style="font-size: 0.8rem; color: #888;">
-        今月の達成: <%= @actions.count %>回 ⭐
-    </span>
+       <div class="calendar-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <%# 先月へのリンク %>
+    <%= link_to '＜', root_path(year: @display_date.prev_month.year, month: @display_date.prev_month.month), class: "nav-btn" %>
+
+    <div style="text-align: center;">
+        <h2 style="margin: 0;"><%= @display_date.strftime('%Y年 %-m月') %></h2>
+        <span style="font-size: 0.8rem; color: #888;">今月の達成: <%= @actions.count %>回 ⭐</span>
+    </div>
+
+    <%# 来月へのリンク %>
+    <%= link_to '＞', root_path(year: @display_date.next_month.year, month: @display_date.next_month.month), class: "nav-btn" %>
 </div>
 
 <div class="calendar-grid">
@@ -42,7 +47,7 @@
         <% day_classes << 'other-month' if date.month != @today.month %>
         
         <div class="day <%= day_classes.join(' ') %>" 
-             onclick="openModal('<%= date %>', '<%= action&.content %>', '<%= action&.reflection %>', '<%= action&.tomorrow_goal %>')">
+            onclick="openModal('<%= date %>', '<%= action&.content %>', '<%= action&.reflection %>', '<%= action&.tomorrow_goal %>', '<%= action&.id %>')">
             <%= date.day %>
         </div>
     <% end %>
@@ -65,7 +70,7 @@
         <div class="modal-title" id="modalDateDisplay">日付</div>
         
         <%# Railsの本物のフォーム作成用コード %>
-        <%= form_with(model: Action.new, scope: :user_action, url: actions_path,local: true) do |f| %>
+        <%= form_with(model: Action.new, scope: :user_action, url:user_actions_path,local: true, id: 'action-form', data: { turbo: false }) do |f| %>
             <%# JavaScriptから日付を渡すための隠し入力欄 %>
             <%= f.hidden_field :date, id: 'modalDateInput' %>
 
@@ -82,47 +87,50 @@
     <%= f.text_field :tomorrow_goal, id: 'goalField', placeholder: "明日、最高のスタートを切るために一言" %>
 </div>
 
-            <%= f.submit "保存して一歩進む", class: "save-btn" %>
+           <div class="modal-footer" style="display: flex; gap: 10px; margin-top: 1.5rem;">
+        <%= f.submit "一歩進む", id: 'submit-btn', class: "submit-btn" %>
+            </div>
+</div>
         <% end %>
     </div>
 </div>
 
 <script>
-    // 1. モーダルを開く関数（引数にデータを受け取るように進化！）
-    function openModal(date, content, reflection, tomorrowGoal) {
-        // 表示用と隠し入力用の日付をセット
-        const displayElement = document.getElementById('modalDateDisplay');
-        if (displayElement) displayElement.innerText = date + " の記録";
-        
-        const inputElement = document.getElementById('modalDateInput');
-        if (inputElement) inputElement.value = date;
+    // これ一つで「新規」と「編集」の両方をこなす賢い関数
+    function openModal(date, content, reflection, tomorrowGoal, actionId) {
+    // 既存の隠しPATCH入力をリセット
+    const oldMethod = document.querySelector('input[name="_method"]');
+    if (oldMethod) oldMethod.remove();
 
-        // フォームの各入力欄に、保存済みの値をセット（データがない場合は "" 空文字になる）
-        // ※ HTML側の input/textarea に id="contentField" などがついている必要があります！
-        if (document.getElementById('contentField')) {
-            document.getElementById('contentField').value = content || "";
-        }
-        if (document.getElementById('reflectionField')) {
-            document.getElementById('reflectionField').value = reflection || "";
-        }
-        if (document.getElementById('goalField')) {
-            document.getElementById('goalField').value = tomorrowGoal || "";
-        }
+    document.getElementById('modalDateDisplay').innerText = date + " の記録";
+    document.getElementById('modalDateInput').value = date;
+    document.getElementById('contentField').value = content || "";
+    document.getElementById('reflectionField').value = reflection || "";
+    document.getElementById('goalField').value = tomorrowGoal || "";
 
-        // モーダルを表示
-        document.getElementById('actionModal').style.display = 'flex';
+    const form = document.getElementById('action-form');
+    const submitBtn = document.getElementById('submit-btn');
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    let csrfInput = form.querySelector('input[name="authenticity_token"]');
+    if (csrfInput) {
+        csrfInput.value = csrfToken;
     }
 
-    // 2. モーダルを閉じる関数
-    function closeModal() {
-        document.getElementById('actionModal').style.display = 'none';
+    if (actionId && actionId !== "" && actionId !== "undefined") {
+        // 【編集モード】
+        form.action = `/user_actions/${actionId}`;
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'patch';
+        form.appendChild(methodInput);
+        submitBtn.value = "内容を更新する";
+    } else {
+        // 【新規作成モード】
+        form.action = '/user_actions';
+        submitBtn.value = "一歩進む";
     }
-
-    // 3. モーダルの外側をクリックしたら閉じる設定
-    window.onclick = function(event) {
-        const modal = document.getElementById('actionModal');
-        if (event.target == modal) {
-            closeModal();
-        }
-    }
+    document.getElementById('actionModal').style.display = 'flex';
+}
 </script>

@@ -186,3 +186,28 @@ border: 2px solid #ffb703;
     color: #ccc; 
     background-color: #fafafa; 
 }
+
+.nav-btn {
+    text-decoration: none;
+    color: #219ebc;
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 5px 15px;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+.nav-btn:hover {
+    background-color: #eeeeee;
+}
+
+.delete-btn {
+    background-color: #f1f1f1;
+    color: #e63946;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+.delete-btn:hover {
+    background-color: #ffd1d1;
+}
