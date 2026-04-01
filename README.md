@@ -1,24 +1,44 @@
-# README
+# One Step（ワンステップ）
+**「未来の自分」と繋がり、今日の一歩を積み重ねる。**
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## 🔗 デモ URL
+https://one-step-app.onrender.com
 
-Things you may want to cover:
 
-* Ruby version
+## 🚀 サービス概要
+「将来のビジョンはあるけれど、日々の忙しさに追われて、本当に大切なことに対しての行動、アプローとができない」
+そんな課題を解決するために開発した、**未来志向のセルフマネジメントアプリ**です。
+単なるタスク管理ではなく、長期目標（ビジョン）を常に意識しながら、今日のアクションを記録します。
 
-* System dependencies
+## 🛠️ 主な機能
+- **ビジョン管理（マイページ）**: 自分がなりたい姿や長期目標を設定。
+- **Actionカレンダー**: 
+  - その日の行動、振り返り、翌日の宣言をワンセットで記録。
+  - 達成状況をカレンダー上で可視化。
+- **レスポンシブデザイン**: スマホからも手軽に記録可能。
 
-* Configuration
+## 💡 開発背景
+「成長したい」という強い思いがある一方で、日々の業務に追われ、本来大切にしたい価値観や長期的な目標を見失ってしまうという課題がありました。
 
-* Database creation
+この課題を解決するため、以下の2点を軸に本アプリを開発しました。
 
-* Database initialization
+ビジョンの可視化: 常に長期目標が目に入る状態を作り、思考の軸を固定する。
 
-* How to run the test suite
+行動への落とし込み: 大きな目標を「今日の一歩（Action Plan）」に分解し、毎日記録することで、目標達成への実感と継続的な行動を促す。
 
-* Services (job queues, cache servers, search engines, etc.)
+忙しい毎日の中でも、未来の自分を身近に感じ、前向きに歩み続けられる仕組みを目指しています。
 
-* Deployment instructions
+## 🛠️ 使用技術
+- **Backend**: Ruby 3.2.0 / Ruby on Rails 7.1
+- **Frontend**: JavaScript / CSS (Vanilla)
+- **Database**: PostgreSQL
+- **Infrastructure**: Render
 
-* ...
+## 📅 今後の実装予定（追加機能）
+健康管理機能（睡眠・食事・運動の記録）
+
+理由: 高い目標を達成し続けるためには、土台となる心身のコンディション管理が不可欠だと考えたためです。学習効率やモチベーションの変化と、生活習慣の相関を可視化することで、より科学的な自己改善を促します。
+
+継続状況のグラフ化（ダッシュボード機能）
+
+理由: 「今日の一歩」の積み重ねを視覚的に実感しやすくするためです。蓄積されたデータが自信（自己効力感）に繋がり、挫折しにくい環境を構築します。
