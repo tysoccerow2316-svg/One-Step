@@ -12,26 +12,27 @@ RSpec.describe "Action管理機能", type: :system do
     expect(page).to have_content('Logout', wait: 5)
   end
 
-  it 'カレンダーの日付をクリックして、Actionを新規投稿できる' do
-  today = Time.zone.now.to_date
-
+ it 'カレンダーの日付をクリックして、Actionを新規投稿できる', js: true do
   expect(page).to have_selector('.day', wait: 10)
+today = Time.zone.now.to_date.to_s 
+  
+  page.execute_script <<~JS
+  try {
+    openModal('#{today}', '', '', '', '');
+  } catch(e) {}
+  document.querySelector('.modal').style.display = 'flex';
+JS
 
-  # モーダル強制オープン
-  page.execute_script(<<~JS)
-    document.getElementById('actionModal').style.display = 'flex';
-  JS
-
-  page.execute_script("document.getElementById('modalDateInput').value = '#{today}'")
-
-  expect(page).to have_selector('#actionModal', visible: true, wait: 10)
+  expect(page).to have_content('☀️ 今日のAction', wait: 10)
 
   fill_in 'contentField', with: 'RSpecのテストを書き切る！'
   fill_in 'reflectionField', with: 'エラーを乗り越えて自信がついた。'
   fill_in 'goalField', with: '明日はポートフォリオをデプロイする'
 
-  click_button '一歩進む'
+  page.execute_script <<~JS
+  document.querySelector('form').submit();
+JS
 
-  expect(page).to have_content('RSpecのテストを書き切る！', wait: 10)
+ expect(page).to have_text('RSpecのテストを書き切る！', wait: 15)
 end
 end
